@@ -1,54 +1,40 @@
   GNU nano 7.2                                                                                                        toip.sh                                                                                                                 
 #!/bin/bash
 
-# Variables
-SOURCE_DIR="/var/lib/docker/volumes/f941c6b8ee4607c610e8024212fc13e6a1e749277ae269c33eb3e550b1cd9a54/_data/data/Thomas/files/TOIP"  # Dossier source à sauvegarder
-BACKUP_DIR="/home/test/archives_toip"  # Répertoire de sauvegarde sur la machine locale (répertoire de l'utilisateur FTP)
-TIMESTAMP=$(date +"%d-%m-%Y_%H:%M:%S")  # Format de date pour nommer le fichier
-ARCHIVE_NAME="sio2-$TIMESTAMP-TOIP.tar.gz"  # Nom du fichier d'archive
-BACKUP_FILE="$BACKUP_DIR/$ARCHIVE_NAME"  # Chemin complet du fichier d'archive
+# Répertoire source (où se trouve le dossier Toip)
+SOURCE_DIR="/var/lib/docker/volumes/f941c6b8ee4607c610e8024212fc13e6a1e749277ae269c33eb3e550b1cd9a54/_data/data/Thomas/files"
 
-# Connexion FTP
-FTP_HOST="192.168.20.42"  # Adresse IP du serveur FTP
-FTP_USER="test"  # Utilisateur FTP
-FTP_PASS="sio2024"  # Mot de passe FTP
-FTP_REMOTE_DIR="/home/test/archives_toip"  # Répertoire distant où sauvegarder l'archive
+# Répertoire de destination pour la sauvegarde
+BACKUP_DIR="/root/backups" # Remplacez par le chemin souhaité si nécessaire
 
-# Vérification si le répertoire de sauvegarde existe, sinon création
-if [ ! -d "$BACKUP_DIR" ]; then
-    echo "Création du répertoire de sauvegarde local : $BACKUP_DIR"
-    mkdir -p "$BACKUP_DIR"
-fi
+# Nom du dossier à sauvegarder
+FOLDER_NAME="TOIP"
 
-# Compression et sauvegarde du dossier TOIP
-echo "Compression et sauvegarde du dossier $SOURCE_DIR vers $BACKUP_FILE..."
-tar -czf "$BACKUP_FILE" -C "$SOURCE_DIR" .
+# Générer un nom d'archive basé sur la date et l'heure
+TIMESTAMP=$(date "+%d-%m-%Y_%H:%M:%S")
+ARCHIVE_NAME="sio2-$TIMESTAMP-$FOLDER_NAME.tar.gz"
+BACKUP_FILE="$BACKUP_DIR/$ARCHIVE_NAME"
 
-if [ $? -eq 0 ]; then
-    echo "Compression terminée avec succès : $BACKUP_FILE"
+# Vérifier si le dossier Toip existe dans le répertoire source
+if [ -d "$SOURCE_DIR/$FOLDER_NAME" ]; then
+    # Créer le répertoire de sauvegarde s'il n'existe pas
+    if [ ! -d "$BACKUP_DIR" ]; then
+        mkdir -p "$BACKUP_DIR"
+    fi
+
+    # Créer une archive compressée du dossier Toip
+    echo "Compression et sauvegarde du dossier $SOURCE_DIR/$FOLDER_NAME vers $BACKUP_FILE..."
+    tar -czf "$BACKUP_FILE" -C "$SOURCE_DIR" "$FOLDER_NAME"
+
+    # Vérification du succès de la sauvegarde
+    if [ $? -eq 0 ]; then
+        echo "Sauvegarde et compression terminées avec succès : $BACKUP_FILE"
+    else
+        echo "Erreur lors de la sauvegarde ou de la compression"
+    fi
 else
-    echo "Erreur lors de la compression."
-    exit 1
+    echo "Le dossier $FOLDER_NAME n'existe pas dans le répertoire source : $SOURCE_DIR"
 fi
-
-# Transfert FTP
-echo "Transfert de l'archive sur le serveur FTP ($FTP_HOST)..."
-
-# Utilisation de la commande FTP pour transférer l'archive
-ftp -inv $FTP_HOST <<EOF
-user $FTP_USER $FTP_PASS
-cd $FTP_REMOTE_DIR
-put $BACKUP_FILE
-bye
-EOF
-
-if [ $? -eq 0 ]; then
-    echo "Transfert FTP réussi : $ARCHIVE_NAME"
-else
-    echo "Erreur lors du transfert FTP."
-    exit 1
-fi
-
 
 
 
