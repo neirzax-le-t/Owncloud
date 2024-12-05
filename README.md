@@ -69,6 +69,7 @@
 - Vous pouvez aussi faire un clique droit sur ce dossier, créer un raccourci sur votre bureau et il continuera a enregistrer sur le cloud (test avec le fichier bonjour)
 
 
+## Etape3 :
 - Mise en place d'une sauvegarde de fichier locale
 
 - Nos fichiers se situent dans le chemin /var/lib/docker/volumes/f941c6b8ee4607c610e8024212fc13e6a1e749277ae269c33eb3e550b1cd9a54/_data/data/Thomas/files# 
@@ -79,44 +80,16 @@
 - Vous retrouverez votre fichier sauvegarder dans le chemin cd /root/backups
 
  
-- Pour compresser et enregireter le dossier TOIP 
- il faut créer un fichier toip.sh
-- mettre ce code: 
-  GNU nano 7.2                                                                                                        toip.sh                                                                                                                 
-#!/bin/bash
+- Pour compresser et enregireter le dossier TOIP il faut créer un fichier toip.sh (voir fichier)
+- rendez ce script executable avec la commande +x /toip.sh .
+- executez le en faisant ./toipsh 
+- Vous retrouverez votre fichier sauvegarder dans le chemin cd /root/backups
 
-# Répertoire source (où se trouve le dossier Toip)
-SOURCE_DIR="/var/lib/docker/volumes/f941c6b8ee4607c610e8024212fc13e6a1e749277ae269c33eb3e550b1cd9a54/_data/data/Thomas/files"
-
-# Répertoire de destination pour la sauvegarde
-BACKUP_DIR="/root/backups" # Remplacez par le chemin souhaité si nécessaire
-
-echo "Le dossier $FOLDER_NAME n'existe pas dans le répertoire source : $SOURCE_DIR"
-fi
-- Vous retrouverez votre fichier dans le chemin cd /root/backups
 
 - Mainteant on souhaite que ce fichier puisse être envoyé sur notre machine OMV 
-- Il faut tout simplement modifier le fichier comme ci-dessous en indiquant les informations du ftp
+- Il faut tout simplement modifier le fichier toip.sh  les informations du ftp (voir fichier toipftp.sh)
+- rendez ce script executable avec la commande +x /toipftp.sh .
+- executez le en faisant ./toipftp.sh
+- Vous retrouverez votre fichier sauvegarder dans le chemin cd /root/backups de votre machine et dans le dossier archives_toip de votre machine cliente ftp
+
                                                                                                              
-#!/bin/bash
-
-# Variables
-SOURCE_DIR="/var/lib/docker/volumes/f941c6b8ee4607c610e8024212fc13e6a1e749277ae269c33eb3e550b1cd9a54/_data/data/Thomas/files/TOIP"  # Dossier source à sauvegarder
-BACKUP_DIR="/home/test/archives_toip"  # Répertoire de sauvegarde sur la machine locale (répertoire de l'utilisateur FTP)
-TIMESTAMP=$(date +"%d-%m-%Y_%H:%M:%S")  # Format de date pour nommer le fichier
-ARCHIVE_NAME="sio2-$TIMESTAMP-TOIP.tar.gz"  # Nom du fichier d'archive
-BACKUP_FILE="$BACKUP_DIR/$ARCHIVE_NAME"  # Chemin complet du fichier d'archive
-
-# Connexion FTP
-FTP_HOST="192.168.20.42"  # Adresse IP du serveur FTP
-FTP_USER="test"  # Utilisateur FTP
-FTP_PASS="sio2024"  # Mot de passe FTP
-FTP_REMOTE_DIR="/home/test/archives_toip"  # Répertoire distant où sauvegarder l'archive
-
-# Vérification si le répertoire de sauvegarde existe, sinon création
-if [ ! -d "$BACKUP_DIR" ]; then
-    echo "Création du répertoire de sauvegarde local : $BACKUP_DIR"
-    mkdir -p "$BACKUP_DIR"
-fi
-
-# Compression et sauvegarde du dossier TOIP
