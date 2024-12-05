@@ -72,76 +72,13 @@
 - Mise en place d'une sauvegarde de fichier locale
 
 - Nos fichiers se situent dans le chemin /var/lib/docker/volumes/f941c6b8ee4607c610e8024212fc13e6a1e749277ae269c33eb3e550b1cd9a54/_data/data/Thomas/files# 
--Créer un script a la racine de votre machine en le nommant backup.sh et mettez ceci dedans:
-
-#!/bin/bash
-
-# Répertoire source (vos fichiers OwnCloud)
-SOURCE_DIR="/var/lib/docker/volumes/f941c6b8ee4607c610e8024212fc13e6a1e749277ae269c33eb3e550b1cd9a54/_data/data/Thomas/files/Documents/test.txt"
-
-# Répertoire de destination pour les sauvegardes
-BACKUP_DIR="/root/backups" # Remplacez par le chemin souhaité pour les sauvegardes
-
-# Générer un nom de dossier de sauvegarde basé sur la date et l'heure
-TIMESTAMP=$(date "+%d-%m-%Y_%H:%M:%S")
-DEST_DIR="$BACKUP_DIR/sio2-$TIMESTAMP"
-
-# Créer le répertoire de sauvegarde s'il n'existe pas
-if [ ! -d "$BACKUP_DIR" ]; then
-    mkdir -p "$BACKUP_DIR"
-fi
-
-# Copier les fichiers et leur structure dans le répertoire de destination
-echo "Sauvegarde des fichiers de $SOURCE_DIR vers $DEST_DIR..."
-cp -r "$SOURCE_DIR" "$DEST_DIR"
-
-# Vérification du succès de la sauvegarde
-if [ $? -eq 0 ]; then
-    echo "Sauvegarde terminée avec succès dans : $DEST_DIR"
-else
-    echo "Erreur lors de la sauvegarde"
-fi
+-Créer un script a la racine de votre machine en le nommant backup.sh et mettez ceci dedans (voir fichier backup.sh)
 
 - rendez ce script executable avec la commande +x /backup.sh .
 - executez le en faisant .backup/sh 
-- Un dossier sera créer en récupérant l'intégralité des fichiers et dossiers de votre owncloud 
-- Vous retrouverez votre dosiser dans le chemin cd /root/backups
+- Vous retrouverez votre fichier sauvegarder dans le chemin cd /root/backups
 
-- Pour sauvegarder faire ce script: 
-#!/bin/bash
-
-# Répertoire source (où se trouve test.txt)
-SOURCE_DIR="/var/lib/docker/volumes/f941c6b8ee4607c610e8024212fc13e6a1e749277ae269c33eb3e550b1cd9a54/_data/data/Thomas/files"
-
-# Répertoire de destination pour la sauvegarde
-BACKUP_DIR="/root/backups" # Remplacez par le chemin souhaité si nécessaire
-
-# Générer un nom de fichier basé sur la date et l'heure
-TIMESTAMP=$(date "+%d-%m-%Y_%H:%M:%S")
-BACKUP_FILE="$BACKUP_DIR/sio2-$TIMESTAMP-test.txt"
-
-# Vérifier si le fichier test.txt existe dans le répertoire source
-if [ -f "$SOURCE_DIR/test.txt" ]; then
-    # Créer le répertoire de sauvegarde s'il n'existe pas
-    if [ ! -d "$BACKUP_DIR" ]; then
-        mkdir -p "$BACKUP_DIR"
-    fi
-
-    # Copier le fichier test.txt vers le répertoire de destination avec un nom unique
-    cp "$SOURCE_DIR/test.txt" "$BACKUP_FILE"
-
-    # Vérifier si la copie a réussi
-    if [ $? -eq 0 ]; then
-        echo "Sauvegarde terminée avec succès : $BACKUP_FILE"
-    else
-        echo "Erreur lors de la sauvegarde"
-    fi
-else
-    echo "Le fichier test.txt n'existe pas dans le répertoire source : $SOURCE_DIR"
-fi
-
-- Vous retrouverez votre fichier dans le chemin cd /root/backups
-
+ 
 - Pour compresser et enregireter le dossier TOIP 
  il faut créer un fichier toip.sh
 - mettre ce code: 
@@ -154,33 +91,7 @@ SOURCE_DIR="/var/lib/docker/volumes/f941c6b8ee4607c610e8024212fc13e6a1e749277ae2
 # Répertoire de destination pour la sauvegarde
 BACKUP_DIR="/root/backups" # Remplacez par le chemin souhaité si nécessaire
 
-# Nom du dossier à sauvegarder
-FOLDER_NAME="TOIP"
-
-# Générer un nom d'archive basé sur la date et l'heure
-TIMESTAMP=$(date "+%d-%m-%Y_%H:%M:%S")
-ARCHIVE_NAME="sio2-$TIMESTAMP-$FOLDER_NAME.tar.gz"
-BACKUP_FILE="$BACKUP_DIR/$ARCHIVE_NAME"
-
-# Vérifier si le dossier Toip existe dans le répertoire source
-if [ -d "$SOURCE_DIR/$FOLDER_NAME" ]; then
-    # Créer le répertoire de sauvegarde s'il n'existe pas
-    if [ ! -d "$BACKUP_DIR" ]; then
-        mkdir -p "$BACKUP_DIR"
-    fi
-
-    # Créer une archive compressée du dossier Toip
-    echo "Compression et sauvegarde du dossier $SOURCE_DIR/$FOLDER_NAME vers $BACKUP_FILE..."
-    tar -czf "$BACKUP_FILE" -C "$SOURCE_DIR" "$FOLDER_NAME"
-
-    # Vérification du succès de la sauvegarde
-    if [ $? -eq 0 ]; then
-        echo "Sauvegarde et compression terminées avec succès : $BACKUP_FILE"
-    else
-        echo "Erreur lors de la sauvegarde ou de la compression"
-    fi
-else
-    echo "Le dossier $FOLDER_NAME n'existe pas dans le répertoire source : $SOURCE_DIR"
+echo "Le dossier $FOLDER_NAME n'existe pas dans le répertoire source : $SOURCE_DIR"
 fi
 - Vous retrouverez votre fichier dans le chemin cd /root/backups
 
